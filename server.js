@@ -55,6 +55,33 @@ app.post('/shorten',(req,res) => {
 
 });
 
+app.get('/shorten/:shortcode',(req,res) => {
+  const shortcode = req.params.shortcode;
+
+  db.get(`SELECT * FROM urls WHERE short_code = ?`, 
+    [shortcode], 
+    function(err, row){
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      if(!row){
+        return res.status(404).json({
+          "error": "Short URL not found"
+        })
+      }
+
+      return res.status(200).json({
+        "id": row.id,
+        "url": row.url,
+        "short_code": row.short_code,
+        "created_at": row.created_at,
+        "updated_at": row.updated_at
+      })
+    })
+})
+
 app.listen(port,() => console.log
 (`Server is running on port ${port}`));
 
