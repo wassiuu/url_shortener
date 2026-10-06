@@ -68,8 +68,55 @@ router.get('/:shortcode',(req,res) => {
     })
 })
 
+router.put('/:shortcode',(req,res) => {
+  const shortcode = req.params.shortcode;
+  const newUrl = req.body.url;
 
+  if(!newUrl){
+    return res.status(400).json({
+      "error": "URL is required"
+    })
+  }
 
+  const now = new Date().toISOString();
+
+  db.run(
+    `UPDATE urls
+    SET url = ?, updated_at = ?
+    WHERE short_code = ?`,
+    [newUrl, now, shortcode],
+    function(err){
+
+      if(err){
+        console.error(err);
+        return;
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({
+          "error": "Short URL not found"
+        })
+      }
+
+      db.get(`
+        SELECT * FROM urls WHERE short_code = ?`,
+        [shortcode],
+        function(err, row){
+          if(err){
+            console.error(err);
+            return;
+          }
+
+          return res.status(200).json({
+            "id": row.id,
+            "url": row.url,
+            "short_code": row.short_code,
+            "created_at": row.created_at,
+            "updated_at": row.updated_at
+          })
+        })
+    })
+})
 
 
 module.exports = router;
