@@ -118,5 +118,28 @@ router.put('/:shortcode',(req,res) => {
     })
 })
 
+router.delete('/:shortcode',(req,res) => {
+  const shortcode = req.params.shortcode;
+
+  db.run(
+    `DELETE FROM urls WHERE short_code = ?`,
+    [shortcode],
+
+    function(err){
+      if(err){
+        console.error(err);
+        return;
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({
+          "error": "Short URL not found"
+        })
+      }
+
+      return res.status(204).send()
+    }
+  )
+})
 
 module.exports = router;
