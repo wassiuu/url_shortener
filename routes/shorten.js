@@ -35,6 +35,7 @@ router.post('/',(req,res) => {
 
     function(err) {
       if (err) {;
+        console.error(err);
         return res.status(500).json({
           "error": "Database error"
         })
@@ -45,9 +46,9 @@ router.post('/',(req,res) => {
     res.status(201).json({
       "id": this.lastID,
       "url": url,
-      "short_code": shortCode,
-      "created_at": now,
-      "updated_at": now
+      "shortCode": shortCode,
+      "createdAt": now,
+      "updatedAt": now
     })
     }
   )
@@ -61,6 +62,7 @@ router.get('/:shortcode',(req,res) => {
     [shortcode], 
     function(err, row){
       if (err) {
+        console.error(err);
         return res.status(500).json({
           "error": "Database error"
         })
@@ -79,6 +81,7 @@ router.get('/:shortcode',(req,res) => {
         [shortcode],
         function(err){
           if(err){
+            console.error(err);
             return res.status(500).json({
               "error": "Database error"
             });
@@ -86,9 +89,9 @@ router.get('/:shortcode',(req,res) => {
       return res.status(200).json({
         "id": row.id,
         "url": row.url,
-        "short_code": row.short_code,
-        "created_at": row.created_at,
-        "updated_at": row.updated_at
+        "shortCode": row.short_code,
+        "createdAt": row.created_at,
+        "updatedAt": row.updated_at
       })
     })
     })
@@ -125,6 +128,7 @@ router.put('/:shortcode',(req,res) => {
     function(err){
 
       if(err){
+        console.error(err);
         return res.status(500).json({
           "error": "Database error"
         });
@@ -141,6 +145,7 @@ router.put('/:shortcode',(req,res) => {
         [shortcode],
         function(err, row){
           if(err){
+            console.error(err);
             return res.status(500).json({
               "error": "Database error"
             });
@@ -149,9 +154,9 @@ router.put('/:shortcode',(req,res) => {
           return res.status(200).json({
             "id": row.id,
             "url": row.url,
-            "short_code": row.short_code,
-            "created_at": row.created_at,
-            "updated_at": row.updated_at
+            "shortCode": row.short_code,
+            "createdAt": row.created_at,
+            "updatedAt": row.updated_at
           })
         })
     })
@@ -166,6 +171,7 @@ router.delete('/:shortcode',(req,res) => {
 
     function(err){
       if(err){
+        console.error(err);
         return res.status(500).json({
           "error": "Database error"
         });
@@ -189,7 +195,8 @@ router.get('/:shortcode/stats',(req,res) => {
     [shortcode],
     function(err,row){
       if(err){
-          return res.status(500).json({
+        console.error(err);
+        return res.status(500).json({
           "error": "Database error"
         });
       }
