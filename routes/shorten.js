@@ -58,6 +58,16 @@ router.get('/:shortcode',(req,res) => {
         })
       }
 
+      db.run(
+        `UPDATE urls
+        SET access_count = access_count + 1
+        WHERE short_code = ?`,
+        [shortcode],
+        function(err){
+          if(err){
+            console.error(err);
+            return;
+        }
       return res.status(200).json({
         "id": row.id,
         "url": row.url,
@@ -65,6 +75,7 @@ router.get('/:shortcode',(req,res) => {
         "created_at": row.created_at,
         "updated_at": row.updated_at
       })
+    })
     })
 })
 
@@ -138,6 +149,35 @@ router.delete('/:shortcode',(req,res) => {
       }
 
       return res.status(204).send()
+    }
+  )
+})
+
+router.get('/:shortcode/stats',(req,res) => {
+  const shortcode = req.params.shortcode;
+
+  db.get(`SELECT * FROM urls WHERE short_code = ?`,
+    [shortcode],
+    function(err,row){
+      if(err){
+        console.error(err);
+        return;
+      }
+
+      if(!row){
+        return res.status(404).json({
+          "error": "Short URL not found"
+        })
+      }
+
+      return res.status(200).json({
+        "id": row.id, 
+        "url": row.url,
+        "shortCode": row.short_code,
+        "createdAt": row.created_at,
+        "updatedAt": row.updated_at,
+        "accessCount": row.access_count
+      })
     }
   )
 })
