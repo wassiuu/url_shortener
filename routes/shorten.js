@@ -13,6 +13,18 @@ router.post('/',(req,res) => {
     })
   }
 
+  try {
+  const parsedUrl = new URL(url);
+
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    throw new Error();
+  }
+} catch {
+  return res.status(400).json({
+    error: "Invalid URL"
+  });
+}
+
   const shortCode = generateShortCode();
   const now = new Date().toISOString();
 
@@ -88,6 +100,17 @@ router.put('/:shortcode',(req,res) => {
       "error": "URL is required"
     })
   }
+  try {
+  const parsedUrl = new URL(newUrl);
+
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    throw new Error();
+  }
+} catch {
+  return res.status(400).json({
+    error: "Invalid URL"
+  });
+}
 
   const now = new Date().toISOString();
 
