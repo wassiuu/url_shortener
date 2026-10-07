@@ -90,18 +90,6 @@ router.get('/:shortcode',(req,res) => {
         })
       }
 
-      db.run(
-        `UPDATE urls
-        SET access_count = access_count + 1
-        WHERE short_code = ?`,
-        [shortcode],
-        function(err){
-          if(err){
-            console.error(err);
-            return res.status(500).json({
-              "error": "Database error"
-            });
-        }
       return res.status(200).json({
         "id": row.id,
         "url": row.url,
@@ -110,8 +98,7 @@ router.get('/:shortcode',(req,res) => {
         "updatedAt": row.updated_at
       })
     })
-    })
-})
+});
 
 router.put('/:shortcode',(req,res) => {
   const shortcode = req.params.shortcode;
