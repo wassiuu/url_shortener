@@ -34,9 +34,10 @@ router.post('/',(req,res) => {
     `, [url, shortCode, now, now],
 
     function(err) {
-      if (err) {
-        console.error(err);
-        return;
+      if (err) {;
+        return res.status(500).json({
+          "error": "Database error"
+        })
       }
 
     console.log("Inserted row:", this.lastID);
@@ -60,8 +61,9 @@ router.get('/:shortcode',(req,res) => {
     [shortcode], 
     function(err, row){
       if (err) {
-        console.error(err);
-        return;
+        return res.status(500).json({
+          "error": "Database error"
+        })
       }
 
       if(!row){
@@ -77,8 +79,9 @@ router.get('/:shortcode',(req,res) => {
         [shortcode],
         function(err){
           if(err){
-            console.error(err);
-            return;
+            return res.status(500).json({
+              "error": "Database error"
+            });
         }
       return res.status(200).json({
         "id": row.id,
@@ -122,8 +125,9 @@ router.put('/:shortcode',(req,res) => {
     function(err){
 
       if(err){
-        console.error(err);
-        return;
+        return res.status(500).json({
+          "error": "Database error"
+        });
       }
 
       if (this.changes === 0) {
@@ -137,8 +141,9 @@ router.put('/:shortcode',(req,res) => {
         [shortcode],
         function(err, row){
           if(err){
-            console.error(err);
-            return;
+            return res.status(500).json({
+              "error": "Database error"
+            });
           }
 
           return res.status(200).json({
@@ -161,8 +166,9 @@ router.delete('/:shortcode',(req,res) => {
 
     function(err){
       if(err){
-        console.error(err);
-        return;
+        return res.status(500).json({
+          "error": "Database error"
+        });
       }
 
       if (this.changes === 0) {
@@ -183,8 +189,9 @@ router.get('/:shortcode/stats',(req,res) => {
     [shortcode],
     function(err,row){
       if(err){
-        console.error(err);
-        return;
+          return res.status(500).json({
+          "error": "Database error"
+        });
       }
 
       if(!row){
