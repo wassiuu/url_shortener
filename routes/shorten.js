@@ -25,35 +25,51 @@ router.post('/',(req,res) => {
   });
 }
 
-  const shortCode = generateShortCode();
   const now = new Date().toISOString();
 
-  db.run(`
+  function insertUrl(attempt = 1){
+    const shortCode = generateShortCode();
+    db.run(`
     INSERT INTO urls (url, short_code, created_at, updated_at) 
     VALUES (?, ?, ?, ?)
     `, [url, shortCode, now, now],
 
     function(err) {
-      if (err) {;
+      if (err) {
+
+        if (
+          err.code === "SQLITE_CONSTRAINT" &&
+          err.message.includes("urls.short_code")
+        ){
+            if (attempt >= 5) {
+                return res.status(500).json({
+                error: "Could not generate unique short code"
+            });
+            }
+            return insertUrl(attempt + 1);
+        }
         console.error(err);
         return res.status(500).json({
           "error": "Database error"
         })
       }
-
+      
     console.log("Inserted row:", this.lastID);
 
-    res.status(201).json({
+    return res.status(201).json({
       "id": this.lastID,
       "url": url,
       "shortCode": shortCode,
       "createdAt": now,
       "updatedAt": now
     })
-    }
-  )
+    })
 
-});
+  }
+
+  insertUrl()
+})
+
 
 router.get('/:shortcode',(req,res) => {
   const shortcode = req.params.shortcode;
